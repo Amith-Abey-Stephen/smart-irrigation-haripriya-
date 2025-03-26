@@ -2,7 +2,7 @@
   <usernav></usernav>
   
     <div class="ml-[16rem] ">
-        <p class="text-3xl bg-gray-600 p-2 text-gray-100 "> Schedule Watering...</p>
+        <p class="text-3xl bg-gray-600 p-2 text-gray-100 "> Schedule Irrigation...</p>
             <br>
             <p class="text-xl pl-2"> Pick a date and time to schedule irrigation </p>
     </div>

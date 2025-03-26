@@ -40,7 +40,7 @@
                <svg class=" flex-shrink-0 w-6 h-6 text-gray-800 dark:text-gray transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                </svg>
-               <span class="flex-1 ms-3 whitespace-nowrap">Logout</span>     
+               <span class="flex-1 ms-3 whitespace-nowrap" onclick="logout()">Logout</span>     
             </a>
          </li>
       </ul>
@@ -51,8 +51,27 @@
 <script>
 export default{
   name:'navigation',
-  data(){
-    return
-  }
+  methods: {
+     
+     async logout() {
+       const router = useRouter();
+       const auth = getAuth();
+      
+
+      try {
+        await signOut(auth);  // Properly logs the user out from Firebase
+        localStorage.clear(); // Clear all local storage data
+        sessionStorage.clear(); // Clear session data as well
+
+        // Correct redirection to '/'
+      
+        router.push('/');
+         
+      } catch (error) {
+        console.error('Logout failed:', error.message);
+        alert('Failed to log out. Please try again.');
+      }
+    }
+  }
 }
 </script>
