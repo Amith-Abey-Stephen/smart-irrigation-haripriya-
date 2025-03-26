@@ -3,41 +3,54 @@
 
     <div class="ml-[17rem] pr-3 pt-3 relative overflow-x-auto shadow-md sm:rounded-lg">
         <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
-            <div>
-                <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio"
-                    class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                    type="button">
-                    <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-                    </svg>
-                    {{ filterPeriod }}
-                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 4 4 4-4" />
-                    </svg>
-                </button>
-                <div id="dropdownRadio"
-                    class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
-                    data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="top"
-                    style="position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate3d(522.5px, 3847.5px, 0px);">
-                    <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownRadioButton">
-                        <li v-for="(period, index) in filterPeriods" :key="index">
-                            <div class="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <input :id="'filter-radio-' + index" type="radio" :value="period" v-model="filterPeriod"
-                                    name="filter-radio"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                    @change="fetchSoilMoistureData">
-                                <label :for="'filter-radio-' + index"
-                                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300">{{
-                                    period }}</label>
-                            </div>
-                        </li>
-                    </ul>
+            <div class="flex w-full justify-between">
+                <div>
+                    <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio"
+                        class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button">
+
+                        <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
+                        </svg>
+                        {{ filterPeriod }}
+                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
                 </div>
+                <div>
+                    <label class="inline-flex items-center me-5 cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div
+                            class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600 dark:peer-checked:bg-red-600">
+                        </div>
+                        <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-900">Turn On/Off</span>
+                    </label>
+                    <div id="dropdownRadio"
+                        class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
+                        data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="top"
+                        style="position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate3d(522.5px, 3847.5px, 0px);">
+                        <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
+                            aria-labelledby="dropdownRadioButton">
+                            <li v-for="(period, index) in filterPeriods" :key="index">
+                                <div class="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    <input :id="'filter-radio-' + index" type="radio" :value="period"
+                                        v-model="filterPeriod" name="filter-radio"
+                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        @change="fetchSoilMoistureData">
+                                    <label :for="'filter-radio-' + index"
+                                        class="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300">{{
+                                            period }}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
             <div v-if="loading" class="flex justify-center items-center">
                 <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
@@ -61,7 +74,7 @@
                     <th scope="col" class="px-6 py-3">Moisture Level</th>
                     <th scope="col" class="px-6 py-3">Timestamp</th>
                     <th scope="col" class="px-6 py-3">Status</th>
-                    
+
                 </tr>
             </thead>
             <tbody>
@@ -71,7 +84,7 @@
                         {{ data.deviceId || 'Unknown' }}
                     </th>
                     <td class="px-6 py-4">
-                        {{ data.moisture }} 
+                        {{ data.moisture }}
                     </td>
                     <td class="px-6 py-4">
                         {{ formatTimestamp(data.timestamp) }}
@@ -81,7 +94,7 @@
                             {{ getMoistureStatus(data.moistureLevel) }}
                         </span>
                     </td>
-                    
+
                 </tr>
                 <tr v-if="soilMoistureData.length === 0 && !loading" class="bg-white dark:bg-gray-800">
                     <td colspan="5" class="px-6 py-4 text-center">
@@ -134,7 +147,7 @@ export default {
 
                 });
                 console.log(this.soilMoistureData);
-                
+
             } catch (error) {
                 console.error("Firestore test error:", error);
             }
@@ -155,9 +168,9 @@ export default {
 
                 console.log("Executing query...");
                 const docRef = doc(db, "soil_moisture_data");
-                const querySnapshot = await getDocs(collection(db, "soilMoistureData",'0ynCCtF6RbVJIVdRQxKU'));
-                console.log('querySnapshot',querySnapshot);
-                
+                const querySnapshot = await getDocs(collection(db, "soilMoistureData", '0ynCCtF6RbVJIVdRQxKU'));
+                console.log('querySnapshot', querySnapshot);
+
                 console.log(`Query returned ${querySnapshot.docs.length} documents`);
 
                 this.soilMoistureData = querySnapshot.docs.map(doc => {
