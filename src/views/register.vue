@@ -18,29 +18,30 @@
 import { ref } from 'vue';
 import { getAuth,createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from 'vue-router';
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+
 const email= ref("");
 const password= ref("");
 const router = useRouter();
 const auth = getAuth();
+const db = getFirestore();
 
-const register=() =>{
-    createUserWithEmailAndPassword(auth, email.value, password.value)
-    .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        console.log(user);
-        
-        console.log("successfully registered");
-        router.push('/user_anal')
-        // ...
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode);
-        alert(errorMessage)
-        console.log(errorMessage);
-        
+const register = async () => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+    const user = userCredential.user;
+
+    // Add user profile to Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      email: email.value,
+      role: "user", // Default role
     });
+
+    console.log("Successfully registered");
+    router.push('/user_anal');
+  } catch (error) {
+    console.error(error.code, error.message);
+    alert(error.message);
+  }
 };
 </script>

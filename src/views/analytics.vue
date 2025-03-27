@@ -39,10 +39,9 @@
 <script>
 import navigation from '../components/navigation.vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../store/firebase';
 import { getAuth } from 'firebase/auth';
-
 export default {
   name: 'analytics',
   components: { 
@@ -131,61 +130,56 @@ export default {
     };
   },
   methods: {
-    
     async fetchSoilMoistureData() {
       try {
-        const q = query(collection(db, 'soilMoistureData'), orderBy('timestamp', 'asc'));
+        const q = query(
+          collection(db, 'soilMoistureData'),
+          orderBy('timestamp', 'asc'),
+          // limit(100) // Fetch only the latest 100 records
+        );
         const querySnapshot = await getDocs(q);
-        const moistureData = [];
 
-        querySnapshot.forEach(doc => {
+        const moistureData = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          // console.log("Fetched Document:", data);  
+          console.log("Raw Timestamp:", data.timestamp);
 
-          let timestamp = 'Unknown';
+          // Convert Firestore timestamp (epoch format) to a readable date format
+          const rawTimestamp = Number(data.timestamp || 0);
+          const timestamp = rawTimestamp
+            ? new Date(rawTimestamp * 1000).toLocaleDateString('en-IN') // Convert epoch seconds to milliseconds
+            : 'Unknown';
 
-          if (data.timestamp) {
-            const rawTimestamp = Number(data.timestamp);
-
-            if (rawTimestamp < 10000000000) {
-              timestamp = new Date(rawTimestamp * 1000).toLocaleDateString('en-IN');
-            } else {
-              timestamp = new Date(rawTimestamp).toLocaleDateString('en-IN');
-            }
-          }
-
-          if (data.moisture) {
-            moistureData.push({
-              timestamp: timestamp,
-              level: data.moisture
-            });
-          }
+          return {
+            timestamp,
+            level: data.moisture || 0
+          };
         });
 
-        // console.log("Processed Data:", moistureData);
-
+        console.log("Processed Moisture Data:", moistureData);
 
         const timestamps = moistureData.map(entry => entry.timestamp);
+        console.log("Timestamps:", timestamps);
         const moistureLevels = moistureData.map(entry => entry.level);
 
+        // Update chart options and series
         this.chartOptions = {
           ...this.chartOptions,
           xaxis: {
             categories: timestamps,
             labels: {
-              formatter: (value) => value ? value.toString() : ''
+              formatter: value => (value ? value.toString() : '')
             }
           }
         };
-
         this.chartSeries = [{ name: 'Moisture Level', data: moistureLevels }];
 
+        // Calculate total moisture and growth percentage
         const total = moistureLevels.reduce((sum, level) => sum + level, 0);
-        this.totalMoisture = (moistureLevels.length > 0) 
-          ? (total / moistureLevels.length).toFixed(1) 
-          : 0;
-
+        this.totalMoisture = moistureLevels.length > 0 ? (total / moistureLevels.length).toFixed(1) : 0;
         this.growthPercentage = this.calculateGrowth(moistureLevels);
+
+        console.log("Timestamps:", timestamps);
+        console.log("Moisture Levels:", moistureLevels);
       } catch (error) {
         console.error('Error fetching soil moisture data:', error);
       }

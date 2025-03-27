@@ -61,7 +61,9 @@
   onMounted(() => {
     const usersCollection = collection(db, "users");
     onSnapshot(usersCollection, (snapshot) => {
-      users.value = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      users.value = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((user) => user.email !== "admin@gmail.com"); // Replace with the email to exclude
     });
   });
   
