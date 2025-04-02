@@ -141,14 +141,12 @@ export default {
 
         const moistureData = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          console.log("Raw Timestamp:", data.timestamp);
-
+          
           // Convert Firestore timestamp (epoch format) to a readable date format
           const rawTimestamp = Number(data.timestamp || 0);
-          const timestamp = rawTimestamp
-            ? new Date(rawTimestamp * 1000).toLocaleDateString('en-IN') // Convert epoch seconds to milliseconds
-            : 'Unknown';
-
+          const timestamp = rawTimestamp? new Date(rawTimestamp * 1000).toLocaleDateString('en-IN'): 'Unknown';
+          console.log("Timestamp:", data.timestamp);
+          
           return {
             timestamp,
             level: data.moisture || 0

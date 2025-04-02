@@ -84,7 +84,9 @@ import {
 import { 
   getFirestore, 
   doc, 
-  getDoc 
+  getDoc,
+  getDocs,
+  collection 
 } from "firebase/firestore";
 import { useRouter } from 'vue-router';
   
@@ -166,41 +168,59 @@ const login = async () => {
 
   try {
     // Authenticate user
-    const userCredential = await signInWithEmailAndPassword(
-      auth, 
-      email.value, 
-      password.value
-    );
-    console.log(userCredential);
+    const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+    console.log("User Credential:", userCredential);
     
     const user = userCredential.user;
+    console.log("User UID:", user.uid);
 
-    // Validate Role from Firestore
-    const userDocRef = doc(db, "users", user.uid);
-    const userDoc = await getDoc(userDocRef);
-    
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      
-      // Verify selected role matches user's role
-      if (userData.role !== selectedRole.value) {
-        await signOut(auth);
-        error.value = `Access denied. You do not have ${selectedRole.value} privileges.`;
-        return;
-      }
+    // Get all documents inside "users" collection
+    const usersCollectionRef = collection(db, "users");
+    const usersSnapshot = await getDocs(usersCollectionRef);
 
-      // Successful login
-      console.log(`User logged in successfully as ${selectedRole.value}`);
-      redirectBasedOnRole(userData.role);
-    } else {
-      await signOut(auth);
-      error.value = "User profile not found. Please contact the administrator.";
+    let foundUserDoc = null;
+
+    console.log("🔍 Checking all documents inside 'users' collection...");
+
+    for (const userDoc of usersSnapshot.docs) {
+        const userData = userDoc.data(); // Get document fields
+        console.log("Document :"+ JSON.stringify(userData.id ));
+        
+        
+        console.log(`📌 Checking document ${userDoc.id} with UID: ${userData.id}`);
+
+        // ✅ Compare Firestore UID field with the authenticated user's UID
+        if (userData.id === user.uid) {
+            console.log(`✅ Match found in document ${userDoc.id}`);
+            foundUserDoc = userData;
+            break; // Stop searching once we find a match
+        }
     }
-  } catch (err) {
+
+    if (foundUserDoc) {
+        console.log(`🎉 User found inside Firestore:`, foundUserDoc);
+
+        if (foundUserDoc.role !== selectedRole.value) {
+            await signOut(auth);
+            error.value = `Access denied. You do not have ${selectedRole.value} privileges.`;
+            return;
+        }
+
+        console.log(`✅ User logged in successfully as ${selectedRole.value}`);
+        redirectBasedOnRole(foundUserDoc.role);
+    } else {
+        console.error("❌ User UID not found in any document inside 'users'.");
+        await signOut(auth);
+        error.value = "User profile uuuunot found. Please contact the administrator.";
+    }
+
+} catch (err) {
+    console.error("❌ Error during login: ", err);
     error.value = handleAuthError(err.code);
-  } finally {
+} finally {
     loading.value = false;
-  }
+}
+
 };
 
 // Handle Authentication Errors
@@ -210,7 +230,8 @@ const handleAuthError = (errorCode) => {
     "auth/user-not-found": "No account found with this email address",
     "auth/wrong-password": "Incorrect password. Please try again",
     "auth/too-many-requests": "Too many unsuccessful login attempts. Please try again later",
-    "auth/network-request-failed": "Network error. Please check your connection"
+    "auth/network-request-failed": "Network error. Please check your connection",
+    "auth/invalid-credential": "Incorrect Email or password."
   };
 
   return errorMessages[errorCode] || "Login failed. Please try again.";

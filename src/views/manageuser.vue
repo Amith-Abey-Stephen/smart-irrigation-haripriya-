@@ -65,6 +65,8 @@
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter((user) => user.email !== "admin@gmail.com"); // Replace with the email to exclude
     });
+    console.log(users.value);
+    
   });
   
   // Add a new user
@@ -77,7 +79,9 @@
   
       await addDoc(collection(db, "users"), {
         id: user.uid,
-        email: newUser.value.email
+        email: newUser.value.email,
+        role: "user", // Default role
+
       });
   
       newUser.value = { email: "", password: "" };
