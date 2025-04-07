@@ -1,18 +1,12 @@
 <template>
   <navigation></navigation>
   <div class="flex justify-center p-4 ">
-    <div class="ml-[17rem] max-w-3xl min-h-80 w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 ">
+    <div class="ml-[17rem] mt-[5rem] min-h-96 max-w-6xl w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6 ">
       <div class="flex justify-between">
         <div>
           <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">{{ totalMoisture }}</h5>
           <p class="text-base font-normal text-gray-500 dark:text-gray-400">Average Moisture Level</p>
         </div>
-        <!-- <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
-          {{ growthPercentage }}%
-          <svg class="w-3 h-3 ms-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
-          </svg>
-        </div> -->
       </div>
 
       <!-- Chart Container with explicit dimensions -->
@@ -28,7 +22,7 @@
 
       <div class="flex justify-between items-center pt-5">
         <button @click.prevent="fetchSoilMoistureData()" 
-                class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white">
+                class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white pt-8">
           {{ selectedPeriod }}
         </button>
       </div>
