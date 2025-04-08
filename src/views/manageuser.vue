@@ -49,7 +49,7 @@
   <script setup>
   import { ref, onMounted } from "vue";
   import { getAuth, createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
-  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs } from "firebase/firestore";
   import navigation from "../components/navigation.vue";
   
   const auth = getAuth();
@@ -95,11 +95,44 @@
   // Remove user
   const removeUser = async (userId) => {
     try {
-      await deleteDoc(doc(db, "users", userId));
-      alert("User removed successfully!");
-    } catch (error) {
-      console.error("Error removing user:", error.message);
-      alert("Error removing user: " + error.message);
+        // Get all documents inside "users" collection
+      const usersCollectionRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersCollectionRef);
+
+      let foundUserDoc = null;
+      console.log("🔍 Checking all documents inside 'users' collection...");
+
+      for (const userDoc of usersSnapshot.docs) {
+          const userData = userDoc.data(); // Get document fields
+          // console.log("Document :"+ JSON.stringify(userData.id ));
+          // console.log(`📌 Checking document ${userDoc.id} with UID: ${userData.id}`);
+
+          // ✅ Compare Firestore UID field with the authenticated user's UID
+          if (userData.id === userId) {
+              // console.log(`✅ Match found in document ${userDoc.id}`);
+              foundUserDoc = userDoc.id;
+              break; // Stop searching once we find a match
+          }
+      }
+
+      if (foundUserDoc) {
+          // console.log(`🎉 User found inside Firestore:`, foundUserDoc);
+        try{ deleteDoc(doc(db, "users", foundUserDoc));
+        alert("User removed successfully!");
+      } catch (error) {
+        console.error("Error removing user:", error.message);
+        alert("Error removing user: " + error.message);
+      }
+
+      }
+      else {
+          console.error("❌ User UID not found in any document inside 'users'.", err);   
+      }
+    } 
+    catch (err) {
+      console.error("❌ Error occured in removal: ", err);
     }
+
   };
-  </script>
+
+</script>
