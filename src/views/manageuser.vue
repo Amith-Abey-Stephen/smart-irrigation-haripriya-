@@ -48,10 +48,10 @@
   
   <script setup>
   import { ref, onMounted } from "vue";
-  import { getAuth, createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
+  import { getAuth, createUserWithEmailAndPassword  } from "firebase/auth";
   import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs } from "firebase/firestore";
   import navigation from "../components/navigation.vue";
-  
+
   const auth = getAuth();
   const db = getFirestore();
   const users = ref([]);

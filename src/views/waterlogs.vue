@@ -38,11 +38,10 @@
 
                 <!-- toggle on/off -->
                 <label class="inline-flex items-center me-5 cursor-pointer">
-                    <input type="checkbox" value="" class="sr-only peer" checked>
-                    <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600 dark:peer-checked:bg-red-600">
-                    
+                    <input type="checkbox" v-model="isChecked" class="sr-only peer" @change="updateStatus()">
+                    <div class="relative w-11 h-6 bg-gray-700 rounded-full peer peer-focus:ring-2 peer-focus:ring-red-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600 dark:peer-checked:bg-red-600">
                     </div>
-                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-900">Turn On/Off</span>
+                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-900">{{ isChecked ? 'On' : 'Off' }}</span>
                 </label>
                 
             </div>
@@ -108,7 +107,7 @@
 <script>
 
 import navigation from '../components/navigation.vue';
-import { collection, query, getDocs, where, orderBy, limit, Timestamp, doc } from 'firebase/firestore';
+import { collection, query, getDocs, where, orderBy, limit, Timestamp, doc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../store/firebase';
 
 export default {
@@ -226,7 +225,6 @@ export default {
             const dropdownMenu = document.getElementById('dropdownRadio');
             dropdownMenu.classList.toggle('hidden');
         },
-
         
         calculateStartDate() {
             const now = new Date();
@@ -297,7 +295,22 @@ export default {
 
         viewDetails(data) {
             console.log('View details for:', data);
-        }
-    }
+        },
+
+        async updateStatus() {
+            const now = new Date();
+            const epochTimeMilliseconds = now.getTime(); // Get milliseconds since epoch
+            const epochTimeSeconds = Math.floor(epochTimeMilliseconds / 1000);
+            try {
+                await addDoc(collection(db, 'toggleStatus'), {
+                    status: this.isChecked, // Use this.isChecked instead of isChecked
+                    timestamp: epochTimeSeconds,
+                });
+                console.log('Toggle sent to Firestore:', this.isChecked);
+            } catch (error) {
+                console.error('Error writing to Firestore:', error);
+            }
+        },
+    },
 };
 </script>
