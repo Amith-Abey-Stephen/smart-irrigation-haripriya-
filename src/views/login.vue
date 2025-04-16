@@ -12,12 +12,7 @@
               <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Select Role
               </label>
-              <select 
-                v-model="selectedRole" 
-                id="role" 
-                class="input" 
-                required
-              >
+              <select v-model="selectedRole" id="role" class="input" required >
                 <option value="admin">Administrator</option>
                 <option value="user">User</option>
               </select>
@@ -27,30 +22,14 @@
               <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Email Address
               </label>
-              <input 
-                type="email" 
-                v-model="email" 
-                id="email" 
-                class="input" 
-                placeholder="name@example.com" 
-                required 
-                autocomplete="email"
-              />
+              <input type="email" v-model="email" id="email" class="input" placeholder="name@example.com" required autocomplete="email" />
             </div>
 
             <div>
               <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Password
               </label>
-              <input 
-                type="password" 
-                v-model="password" 
-                id="password" 
-                class="input" 
-                placeholder="••••••••" 
-                required 
-                autocomplete="current-password"
-              />
+              <input type="password" v-model="password" id="password" class="input" placeholder="••••••••" required autocomplete="current-password" />
             </div>
 
             <div v-if="error" class="text-red-500 text-sm text-center">
@@ -58,11 +37,7 @@
             </div>
 
             <div class="flex justify-center">
-              <button 
-                type="submit" 
-                class="btn" 
-                :disabled="loading"
-              >
+              <button type="submit" class="btn" :disabled="loading" >
                 {{ loading ? 'Logging in...' : 'Login' }}
               </button>
             </div>

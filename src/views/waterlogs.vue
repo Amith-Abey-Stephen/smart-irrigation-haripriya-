@@ -43,6 +43,12 @@
                     </div>
                     <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-900">{{ isChecked ? 'On' : 'Off' }}</span>
                 </label>
+
+                <!-- LED Indicator -->
+                <div class="flex items-center">
+                    <span class="text-sm font-medium text-gray-900 dark:text-gray-900">System Status:</span>
+                    <div :class="isChecked ? 'bg-green-500' : 'bg-red-500'" class="ml-2 w-4 h-4 rounded-full"></div>
+                </div>
                 
             </div>
 
@@ -55,7 +61,7 @@
                 <p><strong>Debug Info:</strong></p>
                 <p>Query Period: {{ filterPeriod }}</p>
                 <p>Start Date: {{ debugDate }}</p>
-                <p>Collection: soilmoisuredata</p>
+                <p>Collection: soilMoisureData</p>
                 <p>Documents Found: {{ soilMoistureData.length }}</p>
                 <button @click="fetchAllData" class="bg-blue-500 text-white px-2 py-1 rounded mt-1 text-xs">Try Fetching
                     All Data</button>
@@ -107,7 +113,7 @@
 <script>
 
 import navigation from '../components/navigation.vue';
-import { collection, query, getDocs, where, orderBy, limit, Timestamp, doc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, getDocs, where, orderBy, limit, Timestamp, doc, addDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../store/firebase';
 
 export default {
@@ -122,7 +128,8 @@ export default {
             filterPeriods: ['Last day', 'Last 7 days', 'Last 30 days', 'Last month', 'Last year'],
             filterPeriod: 'Last 30 days',
             debugInfo: false,
-            debugDate: null
+            debugDate: null,
+            isChecked: false
         };
     },
     mounted() {
@@ -151,6 +158,8 @@ export default {
 
             try {
                 const startDate = this.calculateStartDate();
+                console.log(startDate);
+
                 this.debugDate = startDate.toDate(startDate.toString().length === 10 ? startDate * 1000 : startDate); 
                 
                 // For debugging
@@ -197,17 +206,17 @@ export default {
                 // Query without date filters to see if any data exists
                 const q = query(soilMoistureRef, limit(100));
                 const querySnapshot = await getDocs(q);
-
+                
                 console.log(`Query returned ${querySnapshot.docs.length} documents`);
 
                 this.soilMoistureData = querySnapshot.docs.map(doc => {
                     const data = doc.data();
-                    console.log("Document data:", data);
+                    console.log("Document data without filters:", data);
                     return {
                         id: doc.id,
                         deviceId: data.deviceId ,
-                        moistureLevel: data.moisture || 0,
-                        timestamp: this.formatTimestamp(data.timestamp || 0),
+                        moistureLevel: data.moisture,
+                        timestamp: date,
                     };
                 });
 
@@ -302,8 +311,9 @@ export default {
             const epochTimeMilliseconds = now.getTime(); // Get milliseconds since epoch
             const epochTimeSeconds = Math.floor(epochTimeMilliseconds / 1000);
             try {
-                await addDoc(collection(db, 'toggleStatus'), {
-                    status: this.isChecked, // Use this.isChecked instead of isChecked
+                const docRef = doc(db, 'toggleStatus', 'mainToggle')
+                await setDoc(docRef, {
+                    status: this.isChecked, 
                     timestamp: epochTimeSeconds,
                 });
                 console.log('Toggle sent to Firestore:', this.isChecked);

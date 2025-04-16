@@ -45,6 +45,12 @@
         Selected: 
         <span class="text-blue-400 font-medium">{{ formattedDateTime }}</span>
       </div>
+
+      <!-- LED Indicator -->
+      <div class="flex items-center justify-center mt-4">
+        <span class="text-sm font-medium">System Status:</span>
+        <div :class="isSystemOn ? 'bg-green-500' : 'bg-red-500'" class="ml-2 w-4 h-4 rounded-full"></div>
+      </div>
     </div>
 
     <!-- Scheduled Irrigations Table -->
@@ -87,7 +93,7 @@
 import navigation from '../components/navigation.vue'
 import { ref, onMounted, computed } from 'vue'
 import { db } from '../store/firebase' // adjust path to your firebase config
-import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore'
+import { collection, addDoc, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore'
 
 export default {
   name: 'schedules',
@@ -96,6 +102,7 @@ export default {
     const dateTime = ref('')
     const duration = ref('1') // Default duration is 1 minute
     const schedules = ref([])
+    const isSystemOn = ref(false) // Add a reactive property for system status
 
     // Computed property to format the selected datetime
     const formattedDateTime = computed(() => {
@@ -148,9 +155,23 @@ export default {
       }
     }
 
-    // Fetch schedules when the component is mounted
+    // Function to fetch system status from Firestore
+    const fetchSystemStatus = async () => {
+      try {
+        const docRef = doc(db, 'toggleStatus', 'mainToggle')
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          isSystemOn.value = docSnap.data().status
+        }
+      } catch (error) {
+        console.error('Error fetching system status:', error)
+      }
+    }
+
+    // Fetch schedules and system status when the component is mounted
     onMounted(() => {
       fetchSchedules()
+      fetchSystemStatus()
     })
 
     return {
@@ -159,7 +180,8 @@ export default {
       schedules,
       formattedDateTime,
       submitSchedule,
-      removeSchedule
+      removeSchedule,
+      isSystemOn
     }
   }
 }

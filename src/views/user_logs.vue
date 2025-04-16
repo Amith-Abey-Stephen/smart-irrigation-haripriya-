@@ -1,44 +1,52 @@
 <template>
   <usernav></usernav>
 
-    <div class="ml-[17rem] pr-3 pt-3 relative overflow-x-auto shadow-md sm:rounded-lg">
+  <div class="ml-[17rem] pr-3 pt-3 relative overflow-x-auto shadow-md  sm:rounded-lg">
         <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
-            <div>
-                <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio"
-                    class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                    type="button">
-                    <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-                    </svg>
-                    {{ filterPeriod }}
-                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 4 4 4-4" />
-                    </svg>
-                </button>
-                <div id="dropdownRadio"
-                    class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
-                    data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="top"
-                    style="position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate3d(522.5px, 3847.5px, 0px);">
-                    <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownRadioButton">
-                        <li v-for="(period, index) in filterPeriods" :key="index">
-                            <div class="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <input :id="'filter-radio-' + index" type="radio" :value="period" v-model="filterPeriod"
-                                    name="filter-radio"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                    @change="fetchSoilMoistureData">
-                                <label :for="'filter-radio-' + index"
-                                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300">{{
-                                    period }}</label>
-                            </div>
-                        </li>
-                    </ul>
+            <div class="flex w-full justify-between ">   
+                <!-- filter ddropdown -->
+                <div>
+                    <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio" @click="filterDate"
+                        class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button">
+
+                        <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
+                        </svg>
+
+                        {{ filterPeriod }}
+                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+
+                    <div id="dropdownRadio" class="absolute top-8 left-0 z-10 hidden w-48 divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-blue-600">   
+                        <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
+                            <li id="dropdownList" v-for="(period, index) in filterPeriods" :key="index ">
+                                <div class="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600 ">
+                                    <input :id="'filter-radio-' + index" type="radio" :value="period" v-model="filterPeriod" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" @change="fetchSoilMoistureData">
+                                    <label @click="filterDate" :for="'filter-radio-' + index" class="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300">{{ period }}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+
+                <!-- toggle on/off -->
+                <label class="inline-flex items-center me-5 cursor-pointer">
+                    <input type="checkbox" v-model="isChecked" class="sr-only peer" @change="updateStatus()">
+                    <div class="relative w-11 h-6 bg-gray-700 rounded-full peer peer-focus:ring-2 peer-focus:ring-red-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600 dark:peer-checked:bg-red-600">
+                    </div>
+                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-900">{{ isChecked ? 'On' : 'Off' }}</span>
+                </label>
+                
             </div>
+
+
             <div v-if="loading" class="flex justify-center items-center">
                 <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                 <span class="ml-2">Loading data...</span>
@@ -61,7 +69,7 @@
                     <th scope="col" class="px-6 py-3">Moisture Level</th>
                     <th scope="col" class="px-6 py-3">Timestamp</th>
                     <th scope="col" class="px-6 py-3">Status</th>
-                    
+
                 </tr>
             </thead>
             <tbody>
@@ -71,17 +79,17 @@
                         {{ data.deviceId || 'Unknown' }}
                     </th>
                     <td class="px-6 py-4">
-                        {{ data.moisture }} 
+                        {{ data.moisture }}
                     </td>
                     <td class="px-6 py-4">
                         {{ formatTimestamp(data.timestamp) }}
                     </td>
                     <td class="px-6 py-4">
-                        <span :class="getMoistureStatusClass(data.moistureLevel)">
-                            {{ getMoistureStatus(data.moistureLevel) }}
+                        <span :class="getMoistureStatusClass(data.moisture)">
+                            {{ getMoistureStatus(data.moisture) }}
                         </span>
                     </td>
-                    
+
                 </tr>
                 <tr v-if="soilMoistureData.length === 0 && !loading" class="bg-white dark:bg-gray-800">
                     <td colspan="5" class="px-6 py-4 text-center">
@@ -94,7 +102,7 @@
             </tbody>
         </table>
     </div>
-    </template>
+</template>
 <script>
 import usernav from '../components/usernav.vue';
 import { collection, query, getDocs, where, orderBy, limit, Timestamp, doc } from 'firebase/firestore';
@@ -128,12 +136,9 @@ export default{
                 console.log(`Found ${testSnapshot.docs.length} documents`);
                 const testDoc = testSnapshot.docs
                 testDoc.forEach(doc => {
-                    console.log(doc.id, '=>', doc.data());
                     this.soilMoistureData.push(doc.data());
-
                 });
-                console.log(this.soilMoistureData);
-                
+
             } catch (error) {
                 console.error("Firestore test error:", error);
             }
@@ -144,29 +149,33 @@ export default{
 
             try {
                 const startDate = this.calculateStartDate();
-                console.log('date', startDate);
-
-                this.debugDate = startDate.toDate().toLocaleString(); // For debugging
-
+                this.debugDate = startDate.toDate(startDate.toString().length === 10 ? startDate * 1000 : startDate); 
+                
+                // For debugging
                 console.log("Fetching data from 'soil_moisture_data' collection");
                 console.log("Using start date:", this.debugDate);
 
 
                 console.log("Executing query...");
-                const docRef = doc(db, "soil_moisture_data");
-                const querySnapshot = await getDocs(collection(db, "soilMoistureData",'0ynCCtF6RbVJIVdRQxKU'));
-                console.log('querySnapshot',querySnapshot);
-                
+                // const docRef = doc(db, "soil_moisture_data");
+                const querySnapshot = await getDocs(collection(db, "soilMoistureData"));
+                console.log('querySnapshot', querySnapshot);
+
                 console.log(`Query returned ${querySnapshot.docs.length} documents`);
 
                 this.soilMoistureData = querySnapshot.docs.map(doc => {
                     const data = doc.data();
                     console.log("Document data:", data);
+
+                    // TimeStamp conversion to date
+                    const rawTimestamp = Number(data.timestamp || 0);
+                    let date = new Date(rawTimestamp ? rawTimestamp * 1000 : rawTimestamp); 
+                    console.log("Converted date:", date);
                     return {
                         id: doc.id,
-                        deviceId: data.deviceId || 'Device-' + Math.floor(Math.random() * 1000),
-                        moistureLevel: data.moistureLevel || 0,
-                        timestamp: data.timestamp?.toDate() || new Date(),
+                        deviceId: data.deviceId,
+                        moistureLevel: data.moisture,
+                        timestamp: date,
                     };
                 });
             } catch (error) {
@@ -181,7 +190,7 @@ export default{
             this.loading = true;
             try {
                 console.log("Fetching all data without filters");
-                const soilMoistureRef = collection(db, 'soil_moisture_data');
+                const soilMoistureRef = collection(db, 'soilMoistureData');
 
                 // Query without date filters to see if any data exists
                 const q = query(soilMoistureRef, limit(100));
@@ -194,9 +203,9 @@ export default{
                     console.log("Document data:", data);
                     return {
                         id: doc.id,
-                        deviceId: data.deviceId || 'Device-' + Math.floor(Math.random() * 1000),
-                        moistureLevel: data.moistureLevel || 0,
-                        timestamp: data.timestamp?.toDate() || new Date(),
+                        deviceId: data.deviceId ,
+                        moistureLevel: data.moisture || 0,
+                        timestamp: this.formatTimestamp(data.timestamp || 0),
                     };
                 });
 
@@ -210,6 +219,11 @@ export default{
             }
         },
 
+        filterDate() {
+            const dropdownMenu = document.getElementById('dropdownRadio');
+            dropdownMenu.classList.toggle('hidden');
+        },
+        
         calculateStartDate() {
             const now = new Date();
             let startDate = new Date();
@@ -233,42 +247,69 @@ export default{
                 default:
                     startDate.setDate(now.getDate() - 30);
             }
-
+            startDate= startDate.toDate(startDate.toString().length === 10 ? startDate * 1000 : startDate); 
+            
             return Timestamp.fromDate(startDate);
         },
 
         formatTimestamp(timestamp) {
             if (!timestamp) return 'Unknown';
-            return new Date(timestamp).toLocaleString();
+
+            // Check if the timestamp is in seconds or milliseconds
+            const isSeconds = timestamp.toString().length === 10; // 10 digits for seconds
+            const date = new Date(isSeconds ? timestamp * 1000 : timestamp); // Convert to milliseconds if in seconds
+            // Format the date with explicit options for AM/PM
+            return date.toLocaleString('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true // Ensures AM/PM format
+            });
         },
 
         getMoistureStatus(level) {
+            
             if (level === undefined || level === null) return 'Unknown';
 
-            if (level < 20) return 'Dry';
-            if (level < 40) return 'Slightly Dry';
-            if (level < 60) return 'Moderate';
-            if (level < 80) return 'Moist';
+            if (level < 4000) return 'Dry';
+            if (level < 4500) return 'Slightly Dry';
+            if (level < 5000) return 'Moderate';
+            if (level < 6000) return 'Moist';
             return 'Wet';
         },
 
         getMoistureStatusClass(level) {
             if (level === undefined || level === null) return 'text-gray-500';
 
-            if (level < 20) return 'text-red-500 font-medium';
-            if (level < 40) return 'text-orange-500 font-medium';
-            if (level < 60) return 'text-green-500 font-medium';
-            if (level < 80) return 'text-blue-400 font-medium';
+            if (level < 4000) return 'text-red-500 font-medium';
+            if (level < 4500) return 'text-orange-500 font-medium';
+            if (level < 5000) return 'text-green-500 font-medium';
+            if (level < 6000) return 'text-blue-400 font-medium';
             return 'text-blue-600 font-medium';
         },
 
         viewDetails(data) {
             console.log('View details for:', data);
-        }
-    }
+        },
+
+        async updateStatus() {
+            const now = new Date();
+            const epochTimeMilliseconds = now.getTime(); // Get milliseconds since epoch
+            const epochTimeSeconds = Math.floor(epochTimeMilliseconds / 1000);
+            try {
+                const docRef = doc(db, 'toggleStatus', 'mainToggle')
+                await setDoc(docRef, {
+                    status: this.isChecked, // Use this.isChecked instead of isChecked
+                    timestamp: epochTimeSeconds,
+                });
+                console.log('Toggle sent to Firestore:', this.isChecked);
+            } catch (error) {
+                console.error('Error writing to Firestore:', error);
+            }
+        },
+    },
 };
 </script>
-
-
-
-
