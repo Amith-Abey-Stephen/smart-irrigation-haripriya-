@@ -4,7 +4,7 @@
     <div class="ml-[17rem] pr-3 pt-3 relative overflow-x-auto shadow-md  sm:rounded-lg">
         <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
             <div class="flex w-full justify-between ">   
-                <!-- filter ddropdown -->
+                <!-- filter dropdown -->
                 <div>
                     <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio" @click="filterDate"
                         class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
@@ -158,40 +158,36 @@ export default {
 
             try {
                 const startDate = this.calculateStartDate();
-                console.log(startDate);
+                console.log("Calculated start date:", startDate);
 
-                this.debugDate = startDate.toDate(startDate.toString().length === 10 ? startDate * 1000 : startDate); 
-                
-                // For debugging
-                console.log("Fetching data from 'soil_moisture_data' collection");
-                console.log("Using start date:", this.debugDate);
+                this.debugDate = startDate.toDate(); // For debugging
 
+                const soilMoistureRef = collection(db, "soilMoistureData");
+                const q = query(
+                    soilMoistureRef,
+                    where("timestamp", ">=", Timestamp.fromMillis(startDate.getTime())), // Ensure correct timestamp format
+                    orderBy("timestamp", "desc")
+                );
 
-                console.log("Executing query...");
-                // const docRef = doc(db, "soil_moisture_data");
-                const querySnapshot = await getDocs(collection(db, "soilMoistureData"));
-                console.log('querySnapshot', querySnapshot);
-
+                const querySnapshot = await getDocs(q);
                 console.log(`Query returned ${querySnapshot.docs.length} documents`);
 
                 this.soilMoistureData = querySnapshot.docs.map(doc => {
                     const data = doc.data();
-                    console.log("Document data:", data);
-
-                    // TimeStamp conversion to date
-                    const rawTimestamp = Number(data.timestamp || 0);
-                    let date = new Date(rawTimestamp ? rawTimestamp * 1000 : rawTimestamp); 
-                    console.log("Converted date:", date);
                     return {
                         id: doc.id,
                         deviceId: data.deviceId,
-                        moistureLevel: data.moisture,
-                        timestamp: date,
+                        moisture: data.moisture,
+                        timestamp: data.timestamp.toDate(), // Convert Firestore Timestamp to JavaScript Date
                     };
                 });
+
+                if (querySnapshot.docs.length === 0) {
+                    console.log("No data found for the selected period.");
+                }
             } catch (error) {
                 console.error("Error fetching soil moisture data:", error);
-                this.debugInfo = true; // Show debug info if there's an error
+                this.debugInfo = true;
             } finally {
                 this.loading = false;
             }
@@ -258,7 +254,6 @@ export default {
                 default:
                     startDate.setDate(now.getDate() - 30);
             }
-            startDate= startDate.toDate(startDate.toString().length === 10 ? startDate * 1000 : startDate); 
             
             return Timestamp.fromDate(startDate);
         },
@@ -285,20 +280,20 @@ export default {
             
             if (level === undefined || level === null) return 'Unknown';
 
-            if (level < 4000) return 'Dry';
-            if (level < 4500) return 'Slightly Dry';
-            if (level < 5000) return 'Moderate';
-            if (level < 6000) return 'Moist';
+            if (level > 1600) return 'Dry';
+            if (level > 1050) return 'Slightly Dry';
+            if (level > 700) return 'Moderate';
+            if (level > 500) return 'Moist';
             return 'Wet';
         },
 
         getMoistureStatusClass(level) {
             if (level === undefined || level === null) return 'text-gray-500';
 
-            if (level < 4000) return 'text-red-500 font-medium';
-            if (level < 4500) return 'text-orange-500 font-medium';
-            if (level < 5000) return 'text-green-500 font-medium';
-            if (level < 6000) return 'text-blue-400 font-medium';
+            if (level > 1600) return 'text-red-500 font-medium';
+            if (level > 1050) return 'text-orange-500 font-medium';
+            if (level > 700) return 'text-green-500 font-medium';
+            if (level > 500) return 'text-blue-400 font-medium';
             return 'text-blue-600 font-medium';
         },
 
